@@ -21,12 +21,12 @@ const ListItem = ({ item, onEdit }) => {
         <p className={item.completed ? "completado" : ""}>{item.title}</p>
         <div className="text-right">
           <div className="d-flex flex-start-end">
-            <div href="" className="mx-2">
+            <div className="mx-2">
               <button onClick={() => onEdit(item)} className="btn btn-success">
                 Edit
               </button>
             </div>
-            <div href="" className="mx-2">
+            <div className="mx-2">
               <button
                 className="btn btn-warning"
                 onClick={() => completeTodo(item)}
@@ -34,7 +34,7 @@ const ListItem = ({ item, onEdit }) => {
                 Completed
               </button>
             </div>
-            <div href="" className="mx-2">
+            <div className="mx-2">
               <button
                 className="btn btn-danger"
                 onClick={() => deleteTodo(item)}
