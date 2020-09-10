@@ -18,8 +18,10 @@ mongoose.connect(
     }
 
     const todoRoutes = require("./routes/todo.routes");
+    const userRoutes = require("./routes/user.routes");
 
     app.use("/api/todos/", todoRoutes);
+    app.use("/api/users/", userRoutes);
 
     app.listen(process.env.APP_PORT, () =>
       console.log("Express is running on port:  " + process.env.APP_PORT)

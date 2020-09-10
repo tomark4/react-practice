@@ -2,6 +2,7 @@ const Todo = require("../models/todo.models");
 
 const controller = {
   get: async (req, res) => {
+    // TODO: todos by user id
     Todo.find({})
       .populate("user")
       .exec()
@@ -28,6 +29,7 @@ const controller = {
     const todo = new Todo();
     todo.title = title;
     todo.desc = desc;
+    // TODO: add user from request
     todo.user = "5f5a7a0ea3b57cde44b468a7";
     todo
       .save()
@@ -42,6 +44,7 @@ const controller = {
     try {
       const { id } = req.params;
       const { title, desc } = req.body;
+
       const todo = await Todo.findByIdAndUpdate(
         { _id: id },
         { title, desc },
