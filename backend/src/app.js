@@ -1,12 +1,28 @@
 const express = require("express");
-const app = express();
+const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
+
+const app = express();
 dotenv.config();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get("*", (req, res) => {
-  res.send({ ok: true, message: "success" });
-});
+mongoose.connect(
+  "mongodb://localhost:27017/todoapp",
+  { useNewUrlParser: true, useUnifiedTopology: true },
+  (err) => {
+    if (err) {
+      console.log("Error de database");
+      return;
+    }
 
-app.listen(process.env.APP_PORT, () =>
-  console.log("Express is running on port:  " + process.env.APP_PORT)
+    const todoRoutes = require("./routes/todo.routes");
+
+    app.use("/api/todos/", todoRoutes);
+
+    app.listen(process.env.APP_PORT, () =>
+      console.log("Express is running on port:  " + process.env.APP_PORT)
+    );
+  }
 );
