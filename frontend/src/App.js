@@ -16,7 +16,7 @@ function App({ todos }) {
 
   useEffect(() => {
     dispatch(getTodos());
-  }, []);
+  }, [dispatch]);
   const submitHandler = (e) => {
     e.preventDefault();
     if (modoEdicion) {
