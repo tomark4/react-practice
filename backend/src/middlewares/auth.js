@@ -1,3 +1,5 @@
+import jwt from "jsonwebtoken";
+
 const isAuthenticated = (req, res, next) => {
   const token = req.headers.authorization;
   if (!token) {
@@ -6,8 +8,10 @@ const isAuthenticated = (req, res, next) => {
       .send({ ok: false, message: "Unauthorized", headers: req.headers });
   }
 
-  // TODO: parse token and set user in request
-  next();
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    console.log(decoded);
+    next();
+  });
 };
 
 module.exports = { isAuthenticated };
