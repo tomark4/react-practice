@@ -9,6 +9,11 @@ const controller = {
     try {
       const { name, email, password } = req.body;
 
+      const validate = validateRegister({ email, password, name });
+      if (validate) {
+        return res.status(400).send({ ok: false, message: validate.message });
+      }
+
       const checkIfExists = await User.findOne({ email: email });
       if (checkIfExists) {
         return res
@@ -82,6 +87,18 @@ function validateFields(data) {
   const schema = Joi.object({
     email: Joi.string().min(3).email().required(),
     password: Joi.string().min(3).required(),
+  });
+
+  const { error } = schema.validate({ ...data });
+
+  return error;
+}
+
+function validateRegister(data) {
+  const schema = Joi.object({
+    email: Joi.string().min(3).email().required(),
+    password: Joi.string().min(3).required(),
+    name: Joi.string().min(3).required(),
   });
 
   const { error } = schema.validate({ ...data });
