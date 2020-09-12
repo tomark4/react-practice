@@ -1,109 +1,43 @@
-import React, { useState, useEffect } from "react";
-import ListItem from "./components/ListItems";
-import { connect, useDispatch } from "react-redux";
-import {
-  addTodoAction,
-  editTodoAction,
-  getTodos,
-} from "./store/ducks/todosDucks";
-import swal from "sweetalert";
+import React from "react";
+import Navbar from "./components/Navbar";
+import { Switch, Route, Redirect } from "react-router-dom";
+import TodoList from "./components/TodoList";
+import Login from "./components/Login";
+import Logout from "./components/Logout";
+import Register from "./components/Register";
 
-function App({ todos }) {
-  const [name, setName] = useState("");
-  const [todo, setTodo] = useState(null);
-  const [modoEdicion, setModoEdicion] = useState(false);
-  const dispatch = useDispatch();
+function isLogin() {
+  return true;
+}
 
-  useEffect(() => {
-    dispatch(getTodos());
-  }, [dispatch]);
-  const submitHandler = (e) => {
-    e.preventDefault();
-    if (modoEdicion) {
-      updateTodo();
-    } else {
-      addTodo();
-    }
-  };
+const PrivateRoute = ({ component, path, ...rest }) => {
+  return isLogin() ? (
+    <Route component={component} path={path} {...rest} />
+  ) : (
+    <Redirect to="/login" {...rest} />
+  );
+};
 
-  const editHandler = (item) => {
-    setTodo(item);
-    setName(item.title);
-    setModoEdicion(true);
-  };
+const PublicRoute = ({ component, path, ...rest }) => {
+  return isLogin() ? (
+    <Redirect to="/todos" {...rest} />
+  ) : (
+    <Route component={component} path={path} {...rest} />
+  );
+};
 
-  const addTodo = () => {
-    if (name.trim().length === 0) {
-      swal("TODO APP", "write something", "warning");
-      return;
-    }
-    dispatch(
-      addTodoAction({
-        id: Date.now(),
-        title: name,
-        completed: false,
-      })
-    );
-    setName("");
-    swal("TODO APP", "Save succesfully", "success");
-  };
-
-  const updateTodo = () => {
-    dispatch(
-      editTodoAction({
-        ...todo,
-        title: name,
-      })
-    );
-    setName("");
-    setTodo(null);
-    setModoEdicion(false);
-  };
-
+function App() {
   return (
     <div className="container">
-      <h2>TODO'S APP</h2>
-      <hr />
-      <div className="row">
-        <div className="col-md-4">
-          <form onSubmit={submitHandler} autoComplete="off">
-            <div className="form-group">
-              <input
-                type="text"
-                name="name"
-                placeholder="Write your task"
-                className="form-control"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <button className="btn btn-primary btn-block" type="submit">
-                {modoEdicion ? <span>Update</span> : <span>Add new</span>}
-              </button>
-            </div>
-          </form>
-        </div>
-        <div className="col-md-6">
-          {todos.length ? (
-            <ul className="list-group">
-              {todos.map((item) => (
-                <ListItem item={item} key={item.id} onEdit={editHandler} />
-              ))}
-            </ul>
-          ) : (
-            <div className="alert alert-info">Nothing to show</div>
-          )}
-        </div>
-      </div>
+      <Navbar />
+      <Switch>
+        <PrivateRoute exact path="/todos" component={TodoList} />
+        <PublicRoute exact path="/login" component={Login} />
+        <PublicRoute exact path="/register" component={Register} />
+        <PrivateRoute exact path="/logout" component={Logout} />
+      </Switch>
     </div>
   );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    todos: state.todos,
-  };
-};
-
-export default connect(mapStateToProps)(App);
+export default App;
