@@ -5,7 +5,7 @@ const isAuthenticated = (req, res, next) => {
   if (!token) {
     return res
       .status(403)
-      .send({ ok: false, message: "Unauthorized", headers: req.headers });
+      .send({ ok: false, message: "Unauthorized" });
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {

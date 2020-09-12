@@ -11,12 +11,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 mongoose.connect(
   "mongodb://localhost:27017/todoapp",
   { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true },
-  (err) => {
-    if (err) {
-      console.log("Error de database");
-      return;
-    }
-
+).then( () => {
     const todoRoutes = require("./routes/todo.routes");
     const userRoutes = require("./routes/user.routes");
 
@@ -26,5 +21,6 @@ mongoose.connect(
     app.listen(process.env.APP_PORT, () =>
       console.log("Express is running on port:  " + process.env.APP_PORT)
     );
-  }
-);
+}).catch( err => {
+  console.log(`Error de database ${err}`);
+});
