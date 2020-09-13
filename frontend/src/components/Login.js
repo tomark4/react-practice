@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import { useSelector, useDispatch } from "react-redux";
+import { login } from "../store/ducks/user";
+import { withRouter } from "react-router-dom";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().email().min(3).required(),
   password: Yup.string().min(3).required(),
 });
 
-const Login = () => {
+const Login = ({ props }) => {
+  const { identity, errorMsg } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
   const initialValues = {
     email: "",
     password: "",
@@ -16,11 +22,16 @@ const Login = () => {
   const formik = useFormik({
     initialValues,
     onSubmit: (values) => {
-      console.log(values);
+      dispatch(login(values));
     },
     validationSchema,
   });
 
+  useEffect(() => {
+    if (identity) {
+      props.history.push("/todos");
+    }
+  }, [identity, errorMsg, props]);
   const { errors, touched, values } = formik;
 
   return (
@@ -28,6 +39,10 @@ const Login = () => {
       <h2 className="text-center my-4">Login</h2>
       <div className="row">
         <div className="col-md-4 mx-auto">
+          {errorMsg && (
+            <div className="alert alert-danger my-2">{errorMsg}</div>
+          )}
+
           <form onSubmit={formik.handleSubmit}>
             <div className="form-group">
               <input
@@ -60,7 +75,9 @@ const Login = () => {
               ) : null}
             </div>
             <div className="form-group">
-              <button className="btn btn-primary btn-block">sign in</button>
+              <button className="btn btn-primary btn-block" type="submit">
+                sign in
+              </button>
             </div>
           </form>
         </div>
@@ -69,4 +86,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default withRouter(Login);
