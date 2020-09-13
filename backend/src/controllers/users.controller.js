@@ -47,15 +47,18 @@ const controller = {
       if (validate) {
         return res.status(400).send({ ok: false, message: validate.message });
       }
-      const user = await User.findOne({ email: email });
+
+      const user = await User.findOne({ email: email }).exec();
       if (!user) {
-        res.status(422).send({ ok: false, message: "email or password wrong" });
+        res
+          .status(422)
+          .send({ ok: false, message: "email or password wrong 1" });
       }
 
       if (!bcrypt.compareSync(password, user.password)) {
         return res
           .status(400)
-          .send({ ok: false, message: "email or password wrong" });
+          .send({ ok: false, message: "email or password wrong 2" });
       }
 
       res.send({
