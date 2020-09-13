@@ -57,7 +57,6 @@ export const login = ({ email, password }) => (dispatch) => {
   })
     .then((resp) => resp.json())
     .then((data) => {
-      console.log(data);
       if (data.ok === true) {
         dispatch({
           type: LOGIN_SUCCESS,
@@ -73,7 +72,10 @@ export const login = ({ email, password }) => (dispatch) => {
       }
     })
     .catch((err) => {
-      console.log(err);
+      dispatch({
+        type: LOGIN_ERROR,
+        payload: err.message,
+      });
     });
 };
 
