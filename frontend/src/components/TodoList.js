@@ -61,7 +61,7 @@ const TodoList = ({ todos }) => {
   };
   return (
     <>
-      <h2 className="text-center my-3">My TODOs</h2>
+      <h2 className="text-center my-3">My TODO's</h2>
       <hr />
       <div className="row">
         <div className="col-md-4">

@@ -1,12 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Navbar = () => {
+  const isLogin = useAuth();
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <Link className="navbar-brand" to="/">
-          APP TODO
+          Todo's App
         </Link>
         <button
           className="navbar-toggler"
@@ -22,27 +25,40 @@ const Navbar = () => {
 
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav mr-auto">
-            <li className="nav-link">
-              <Link to="/todos" className="nav-link">
-                My Todos
-              </Link>
-            </li>
-            <li className="nav-link">
-              <Link to="/register" className="nav-link">
-                Register
-              </Link>
-            </li>
-            <li className="nav-link">
-              <Link to="/login" className="nav-link">
-                Login
-              </Link>
-            </li>
-            <li className="nav-link">
-              <Link to="/logout" className="nav-link">
-                Logout
-              </Link>
-            </li>
+            {!isLogin && (
+              <>
+                <li className="nav-item">
+                  <Link to="/register" className="nav-link">
+                    Register
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/login" className="nav-link">
+                    Login
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
+          {isLogin && (
+            <ul className="navbar-nav ml-auto">
+              <li className="nav-item">
+                <Link to="/todos" className="nav-link">
+                  My Todo's
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/profile" className="nav-link">
+                  Profile
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/logout" className="nav-link">
+                  Logout
+                </Link>
+              </li>
+            </ul>
+          )}
         </div>
       </nav>
     </>

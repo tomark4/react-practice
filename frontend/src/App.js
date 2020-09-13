@@ -5,13 +5,13 @@ import TodoList from "./components/TodoList";
 import Login from "./components/Login";
 import Logout from "./components/Logout";
 import Register from "./components/Register";
-
-function isLogin() {
-  return true;
-}
+import Profile from "./components/Profile";
+import { useAuth } from "./hooks/useAuth";
 
 const PrivateRoute = ({ component, path, ...rest }) => {
-  return isLogin() ? (
+  const isLogin = useAuth();
+
+  return isLogin ? (
     <Route component={component} path={path} {...rest} />
   ) : (
     <Redirect to="/login" {...rest} />
@@ -19,7 +19,8 @@ const PrivateRoute = ({ component, path, ...rest }) => {
 };
 
 const PublicRoute = ({ component, path, ...rest }) => {
-  return isLogin() ? (
+  const isLogin = useAuth();
+  return isLogin ? (
     <Redirect to="/todos" {...rest} />
   ) : (
     <Route component={component} path={path} {...rest} />
@@ -34,6 +35,7 @@ function App() {
         <PrivateRoute exact path="/todos" component={TodoList} />
         <PublicRoute exact path="/login" component={Login} />
         <PublicRoute exact path="/register" component={Register} />
+        <PrivateRoute exact path="/profile" component={Profile} />
         <PrivateRoute exact path="/logout" component={Logout} />
       </Switch>
     </div>
