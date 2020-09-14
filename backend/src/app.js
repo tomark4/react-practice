@@ -14,6 +14,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
+    useFindAndModify: false,
   })
   .then(() => {
     const todoRoutes = require("./routes/todo.routes");

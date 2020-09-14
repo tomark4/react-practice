@@ -80,19 +80,25 @@ const controller = {
         name: Joi.string().required(),
       });
 
-      const { errors } = schema.validate({ name });
+      const { error } = schema.validate({ name });
 
-      if (errors) {
-        return res.status(400).json({ ok: false, message: errors.message });
+      if (error) {
+        return res.status(400).json({ ok: false, message: error.message });
       }
 
       const user = await User.findOneAndUpdate(
         { _id: id },
-        { name: req.body.name }
+        { name: req.body.name },
+        { new: true }
       ).exec();
 
       if (user) {
-        return res.json({ ok: true, message: "success" });
+        return res.json({
+          ok: true,
+          message: "success",
+          user,
+          token: generateToken(user),
+        });
       }
     } catch (err) {
       return res.status(500).json({ ok: false, err, message: "error" });

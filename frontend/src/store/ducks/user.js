@@ -6,12 +6,21 @@ const initialState = {
   errorMsg: "",
 };
 
+const EDIT_USER = "EDIT_USER";
 const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 const LOGIN_ERROR = "LOGIN_ERROR";
 const LOGOUT = "LOGOUT";
 
 export default function userReducer(state = initialState, action) {
   switch (action.type) {
+    case EDIT_USER: {
+      return {
+        ...state,
+        identity: action.payload.user,
+        token: action.payload.token,
+      };
+    }
+
     case LOGIN_SUCCESS: {
       return {
         ...state,
@@ -84,6 +93,17 @@ export const logout = () => (dispatch) => {
     type: LOGOUT,
   });
   deleteStorage();
+};
+
+export const editUserAction = (user, token) => (dispacth) => {
+  dispacth({
+    type: EDIT_USER,
+    payload: {
+      user,
+      token,
+    },
+  });
+  saveStorage(token, user);
 };
 
 const saveStorage = (token, user) => {
