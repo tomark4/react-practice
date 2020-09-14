@@ -1,10 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const isLogin = useAuth();
-
+  const identity = useSelector((s) => s.user.identity);
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -56,6 +57,9 @@ const Navbar = () => {
                 <Link to="/logout" className="nav-link">
                   Logout
                 </Link>
+              </li>
+              <li className="nav-item">
+                <span className="nav-link"> | Hello, {identity.name}</span>
               </li>
             </ul>
           )}

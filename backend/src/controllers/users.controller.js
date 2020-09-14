@@ -71,6 +71,33 @@ const controller = {
       res.send({ ok: false, message: "error", err });
     }
   },
+  update: async (req, res) => {
+    try {
+      const id = req.params.id;
+      const { name } = req.body;
+
+      const schema = Joi.object({
+        name: Joi.string().required(),
+      });
+
+      const { errors } = schema.validate({ name });
+
+      if (errors) {
+        return res.status(400).json({ ok: false, message: errors.message });
+      }
+
+      const user = await User.findOneAndUpdate(
+        { _id: id },
+        { name: req.body.name }
+      ).exec();
+
+      if (user) {
+        return res.json({ ok: true, message: "success" });
+      }
+    } catch (err) {
+      return res.status(500).json({ ok: false, err, message: "error" });
+    }
+  },
   uploadAvatar: (req, res) => {
     // TODO: upload avatar
   },
