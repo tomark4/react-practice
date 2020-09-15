@@ -188,8 +188,8 @@ const controller = {
 };
 
 function generateToken(payload) {
-  const { _id, name, email } = payload;
-  return jwt.sign({ uid: _id, name, email }, process.env.JWT_SECRET);
+  const { _id, name, email, avatar } = payload;
+  return jwt.sign({ uid: _id, name, email, avatar }, process.env.JWT_SECRET);
 }
 
 function validateFields(data) {
