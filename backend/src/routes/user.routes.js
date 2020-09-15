@@ -7,5 +7,5 @@ router.post("/register", controller.register);
 router.post("/login", controller.login);
 router.put("/:id", [isAuthenticated], controller.update);
 router.post("/avatar", [isAuthenticated], controller.uploadAvatar);
-router.get("/avatar", [isAuthenticated], controller.getAvatar);
+router.get("/avatar", controller.getAvatar);
 module.exports = router;

@@ -1,10 +1,11 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import env from "../utils/environment";
 import { editUserAction } from "../store/ducks/user";
 import swal from "sweetalert";
+import ChangeAvatar from "./ChangeAvatar";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().min(3),
@@ -14,10 +15,8 @@ const Profile = () => {
   const user = useSelector((s) => s.user.identity);
   const token = useSelector((s) => s.user.token);
   const dispatch = useDispatch();
-  const inputAvatar = useRef();
-  const [avatarPreview, setAvatarPreview] = useState("/logo192.png");
-
   const uri = env.appUrl;
+
   const initialValues = {
     name: user.name,
   };
@@ -43,11 +42,6 @@ const Profile = () => {
       .catch((err) => console.log(err));
   };
 
-  const avatarChangeHandler = (e) => {
-    const archivo = e.target.files[0];
-    setAvatarPreview(URL.createObjectURL(archivo));
-  };
-
   const formik = useFormik({
     initialValues,
     validationSchema,
@@ -55,31 +49,13 @@ const Profile = () => {
       editUser(values);
     },
   });
+
   return (
     <>
       <div className="row">
         <div className="col-md-6 mx-auto">
-          <div className="text-center my-4">
-            <div className="row my-2">
-              <div className="col">
-                <img src={avatarPreview} alt="Avatar" width="90" height="90" />
-              </div>
-            </div>
-            <input
-              type="file"
-              name="avatar"
-              style={{ display: "none" }}
-              accept="image/*"
-              ref={inputAvatar}
-              onChange={avatarChangeHandler}
-            />
-            <button
-              className="btn btn-danger"
-              onClick={() => inputAvatar.current.click()}
-            >
-              Change avatar
-            </button>
-          </div>
+          <ChangeAvatar user={user} />
+
           <form onSubmit={formik.handleSubmit}>
             <div className="form-group">
               <label htmlFor="">Email</label>
@@ -90,15 +66,21 @@ const Profile = () => {
               <input
                 type="text"
                 name="name"
-                className="form-control"
+                className={`form-control ${
+                  formik.errors.name && formik.touched.name ? "is-invalid" : ""
+                }`}
                 value={formik.values.name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              <div>{formik.errors.name}</div>
+              {formik.errors.name && formik.touched.name ? (
+                <div className="invalid-feedback">{formik.errors.name}</div>
+              ) : null}
             </div>
             <div className="form-group">
-              <button className="btn btn-success">Edit</button>
+              <button className="btn btn-success" type="submit">
+                Edit
+              </button>
             </div>
           </form>
         </div>

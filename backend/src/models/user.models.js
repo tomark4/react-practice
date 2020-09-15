@@ -14,6 +14,11 @@ const userSchema = Schema(
 
 userSchema.methods.toJSON = function () {
   var obj = this.toObject();
+  if (this.avatar) {
+    obj.avatar_path = `${process.env.APP_URL}/uploads/${this._id}/${this.avatar}`;
+  } else {
+    obj.avatar_path = "";
+  }
   delete obj.password;
   return obj;
 };
