@@ -2,6 +2,8 @@ import User from "../models/user.models";
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
+const fs = require("fs");
+const path = require("path");
 
 const controller = {
   register: async (req, res) => {
@@ -104,11 +106,84 @@ const controller = {
       return res.status(500).json({ ok: false, err, message: "error" });
     }
   },
-  uploadAvatar: (req, res) => {
-    // TODO: upload avatar
+  uploadAvatar: async (req, res) => {
+    try {
+      if (!req.files || Object.keys(req.files).length === 0) {
+        return res
+          .status(400)
+          .send({ ok: false, message: "No files were uploaded" });
+      }
+
+      const avatar = req.files.avatar;
+      let ext = avatar.name.split(".")[1];
+      const nombreImg = Date.now() + "." + ext;
+
+      const user = await User.findById(req.user.uid).exec();
+
+      if (!user) {
+        return res.status(400).send({ ok: false, message: "User not found" });
+      }
+
+      const directory = path.resolve(__dirname, `../uploads/${req.user.uid}`);
+
+      if (!fs.existsSync(directory)) {
+        fs.mkdirSync(directory, { recursive: true });
+      }
+
+      const currentImage = `${directory}/${user.avatar}`;
+
+      if (fs.existsSync(currentImage)) {
+        fs.unlinkSync(currentImage);
+      }
+
+      avatar.mv(`${directory}/${nombreImg}`, async (err) => {
+        if (err) return res.status(500).send({ ok: false, message: err });
+        const userUpdated = await User.findByIdAndUpdate(
+          { _id: req.user.uid },
+          {
+            avatar: nombreImg,
+          },
+          { new: true }
+        ).exec();
+
+        if (!userUpdated) {
+          return res
+            .status(500)
+            .send({ ok: false, message: "Error al actualizar" });
+        }
+
+        res.send({
+          ok: true,
+          message: "File uploaded!",
+          user: userUpdated,
+          token: generateToken(userUpdated),
+        });
+      });
+    } catch (err) {
+      return res.status(400).send({ ok: false, message: "error", err });
+    }
   },
-  getAvatar: () => {
-    // TODO: return avatar user
+  getAvatar: async (req, res) => {
+    try {
+      const user = await User.findById({ _id: req.user.uid }).exec();
+
+      if (!user) {
+        return res.status(400).send({ ok: false, message: "user not found" });
+      }
+
+      const avatar = path.resolve(
+        __dirname,
+        `../uploads/${user._id}/${user.avatar}`
+      );
+
+      if (!fs.existsSync(avatar)) {
+        return res.status(400).send({ ok: false, message: "Image not found" });
+      }
+
+      return res.sendFile(avatar);
+    } catch (err) {
+      return res.status(500).send({ ok: false, message: "error", err });
+    }
   },
 };
 
